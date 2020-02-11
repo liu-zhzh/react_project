@@ -4,6 +4,37 @@ import logo from './img/logo.png'; //引入图片要用一个变量去接
 import './css/login.less';
 const {Item} = Form;//从Form身上拿到Item
 class Login extends Component {
+	//自定义密码校验
+	passwordValidator = (rule,value,callback) => {
+		{/*
+								用户名/密码的的合法性要求
+									1). 必须输入
+									2). 必须大于等于4位
+									3). 必须小于等于12位
+									4). 必须是英文、数字或下划线组成
+							*/}
+		if(!value){
+			callback('密码必须输入')
+		}else if(value.length < 4){
+			callback('密码必须大于4位')
+		}else if(value.length > 12){
+			callback('密码必须小于12位')
+		}else if(!(/^\w+$/).test(value)){
+			callback('密码必须是数字字母下划线组成')
+		}else {
+			callback()
+		}
+	}
+	//
+	handleSubmit = (event) => {
+		event.preventDefault()//阻止表单默认行为
+		this.props.form.validateFields((err, values) => {
+			if (!err) {
+					  //如果输入的用户名和密码均没问题，就发送请求
+			  console.log('发送了网络请求', values);
+			}
+		});
+	}
 	render() {
 		const { getFieldDecorator } = this.props.form;//通过From.create加工了新组件,加工之后向Login传递了form属性
 		return (
@@ -40,7 +71,9 @@ class Login extends Component {
 						</Item>
 						<Item>
 							{getFieldDecorator('password', {
-								rules: [{ required: true, message: '密码必须输入' }],
+								rules: [
+									{validator:this.passwordValidator}
+								],
 							})(
 								<Input
 									prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
