@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Form, Icon, Input, Button } from 'antd';
+import axios from 'axios'
 import logo from './img/logo.png'; //引入图片要用一个变量去接
 import './css/login.less';
 const {Item} = Form;//从Form身上拿到Item
@@ -30,8 +31,13 @@ class Login extends Component {
 		event.preventDefault()//阻止表单默认行为
 		this.props.form.validateFields((err, values) => {
 			if (!err) {
+				const {username,password} = values
 					  //如果输入的用户名和密码均没问题，就发送请求
-			  console.log('发送了网络请求', values);
+			  axios.post('http://localhost:3000/login',`username=${username}&password=${password}`)
+			  .then(
+				  (response) => {console.log(response.data);},
+				  (error) => {console.log(error);}
+			  )
 			}
 		});
 	}
